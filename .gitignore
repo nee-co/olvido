@@ -2,3 +2,10 @@ Packages
 .build
 xcuserdata
 *.xcodeproj
+
+.idea/
+logs/
+.DS_Store
+Config/.DS_Store
+.swift-version
+.build
