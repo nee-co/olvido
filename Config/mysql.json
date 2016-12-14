@@ -1,0 +1,8 @@
+{
+    "host": "localhost",
+    "user": "root",
+    "password": "",
+    "database": "olvido_production",
+    "port": "3306",
+    "encoding": "utf8"
+}
