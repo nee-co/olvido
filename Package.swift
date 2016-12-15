@@ -10,9 +10,6 @@ let package = Package(
         "Config",
         "Database",
         "Localization",
-        "Public",
-        "Resources",
         "Tests",
     ]
 )
-
