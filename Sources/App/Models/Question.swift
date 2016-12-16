@@ -7,10 +7,10 @@ final class Question: Model {
     var message: String
     var answer: String
 
-    init(userId: Int, message: String, answer: String) throws {
+    init(droplet: Droplet, userId: Int, message: String, answer: String) throws {
         self.userId  = userId
-        self.message = message
-        self.answer  = answer
+        try self.message = droplet.cipher.encrypt(message)
+        try self.answer  = droplet.hash.make(answer)
     }
 
     init(node: Node, in context: Context) throws {
@@ -27,6 +27,24 @@ final class Question: Model {
             "message": message,
             "answer" : answer
         ])
+    }
+
+    func setParameters(droplet: Droplet, message: Optional<String>, answer: Optional<String>) throws {
+        switch (message, answer) {
+            case (let .some(message), let .some(answer)) :
+                try self.message = droplet.cipher.encrypt(message)
+                try self.answer  = droplet.hash.make(answer)
+            case (let .some(message), .none) :
+                try self.message = droplet.cipher.encrypt(message)
+            case (.none, let .some(answer)) :
+                try self.answer  = droplet.hash.make(answer)
+            default :
+                return
+        }
+    }
+
+    func decryptMessage(droplet: Droplet) throws -> String {
+        return try droplet.cipher.decrypt(message)
     }
 
     static func prepare(_ database: Database) throws {

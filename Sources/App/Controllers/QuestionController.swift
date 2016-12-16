@@ -16,7 +16,7 @@ final class QuestionController: ResourceRepresentable {
                                     .map { (question: Question) -> JSON in
                                         try JSON(node: [
                                             "id": question.id!.int,
-                                            "message": drop.cipher.decrypt(question.message)
+                                            "message": question.decryptMessage(droplet: drop)
                                         ])
                                     }
                                     .makeNode()
@@ -30,7 +30,7 @@ final class QuestionController: ResourceRepresentable {
         try question.save()
         let json = try JSON(node: [
             "id": question.id!.int,
-            "message": drop.cipher.decrypt(question.message)
+            "message": question.decryptMessage(droplet: drop)
         ])
 
         return try Response(status: .created, json: json)
@@ -42,19 +42,7 @@ final class QuestionController: ResourceRepresentable {
         let message: Optional<String> = request.data["message"]?.string
         let answer: Optional<String>  = request.data["answer"]?.string
         var question = try Question(node: question.makeNode())
-
-        switch (message, answer) {
-            case (let .some(message), let .some(answer)) :
-                try question.message = drop.cipher.encrypt(message)
-                try question.answer  = drop.hash.make(answer)
-            case (let .some(message), .none) :
-                try question.message = drop.cipher.encrypt(message)
-            case (.none, let .some(answer)) :
-                try question.answer  = drop.hash.make(answer)
-            default :
-                return try Response(status: .ok, json: JSON(node: [:]))
-        }
-
+        try question.setParameters(droplet: drop, message: message, answer: answer)
         try question.save()
 
         return try Response(status: .noContent, json: JSON(node: [:]))
@@ -89,6 +77,6 @@ extension Request {
               let message = data["message"]?.string,
               let answer  = data["answer"]?.string else { throw Abort.custom(status: .unprocessableEntity, message: "") }
 
-        return try Question(userId: userId, message: drop.cipher.encrypt(message), answer: drop.hash.make(answer))
+        return try Question(droplet: drop, userId: userId, message: message, answer: answer)
     }
 }
