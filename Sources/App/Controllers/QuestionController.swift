@@ -37,25 +37,31 @@ final class QuestionController: ResourceRepresentable {
     }
 
     func update(request: Request, item question: Question) throws -> ResponseRepresentable {
-        let userId = try request.userId()
-        guard let message = request.data["message"]?.string,
-              let answer  = request.data["answer"]?.string else { throw Abort.custom(status: .unprocessableEntity, message: "")}
+        if (try question.userId != request.userId()) { return try Response(status: .forbidden, json: JSON(node: [:])) }
 
-        if (question.userId != userId) { return try Response(status: .forbidden, json: JSON(node: [:])) }
-
+        let message: Optional<String> = request.data["message"]?.string
+        let answer: Optional<String>  = request.data["answer"]?.string
         var question = try Question(node: question.makeNode())
-        try question.message = drop.cipher.encrypt(message)
-        try question.answer  = drop.hash.make(answer)
+
+        switch (message, answer) {
+            case (let .some(message), let .some(answer)) :
+                try question.message = drop.cipher.encrypt(message)
+                try question.answer  = drop.hash.make(answer)
+            case (let .some(message), .none) :
+                try question.message = drop.cipher.encrypt(message)
+            case (.none, let .some(answer)) :
+                try question.answer  = drop.hash.make(answer)
+            default :
+                return try Response(status: .ok, json: JSON(node: [:]))
+        }
+
         try question.save()
 
         return try Response(status: .noContent, json: JSON(node: [:]))
     }
 
     func delete(request: Request, item question: Question) throws -> ResponseRepresentable {
-        let userId = try request.userId()
-
-        if (question.userId != userId) { return try Response(status: .forbidden, json: JSON(node: [:])) }
-
+        if (try question.userId != request.userId()) { return try Response(status: .forbidden, json: JSON(node: [:])) }
         try question.delete()
 
         return try Response(status: .noContent, json: JSON(node: [:]))
