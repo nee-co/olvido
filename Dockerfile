@@ -1,7 +1,7 @@
 # adapted from https://github.com/swiftdocker/docker-swift
 # once docker-swift supports setting the swift version via a build-arg we could pull from there instead
 
-FROM ubuntu:14.04
+FROM buildpack-deps:trusty
 
 ENV SWIFT_BRANCH swift-3.0.2-release
 ENV SWIFT_VERSION swift-3.0.2-RELEASE
