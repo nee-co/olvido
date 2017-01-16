@@ -1,0 +1,35 @@
+version: '2'
+services:
+  olvido-database:
+    image: mariadb:10.1
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_DATABASE: olvido_production
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - olvido:/var/lib/mysql
+    networks:
+      - olvido
+  olvido-application:
+    build: .
+    environment:
+      OLVIDO_PORT: 8080
+      OLVIDO_DATABASE_HOST: olvido-database
+      OLVIDO_DATABASE_USER: root
+      OLVIDO_DATABASE_PASSWORD: root
+    depends_on:
+      - olvido-database
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    networks:
+      - olvido
+
+volumes:
+  olvido:
+    driver: local
+
+networks:
+  olvido:
+    driver: bridge
