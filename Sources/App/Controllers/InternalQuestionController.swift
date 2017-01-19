@@ -1,6 +1,11 @@
 import Vapor
 import HTTP
-import Cocoa
+
+#if os(Linux)
+    import SwiftGlibc
+#else
+    import Foundation
+#endif
 
 final class InternalQuestionController: ResourceRepresentable {
     let drop: Droplet
@@ -29,5 +34,13 @@ final class InternalQuestionController: ResourceRepresentable {
         return Resource(
             index: randomQuestion
         )
+    }
+
+    private func arc4random_uniform(_ max: UInt32) -> UInt32 {
+        #if os(Linux)
+            return UInt32(SwiftGlibc.rand() % Int32(max))
+        #else
+            return Foundation.arc4random_uniform(max)
+        #endif
     }
 }
