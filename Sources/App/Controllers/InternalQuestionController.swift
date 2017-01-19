@@ -22,7 +22,7 @@ final class InternalQuestionController: ResourceRepresentable {
                                     .map { (question: Question) -> JSON in
                                         try JSON(node: [
                                             "id": question.id!.int,
-                                            "message": drop.cipher.decrypt(question.message)
+                                            "message": question.decryptMessage(droplet: drop)
                                         ])
                                     }
         let randomNum = Int(arc4random_uniform(UInt32(questions.count)))
