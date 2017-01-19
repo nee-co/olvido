@@ -1,6 +1,11 @@
 import Vapor
 import HTTP
-import Cocoa
+
+#if os(Linux)
+    import SwiftGlibc
+#else
+    import Foundation
+#endif
 
 final class InternalQuestionController: ResourceRepresentable {
     let drop: Droplet
@@ -17,7 +22,7 @@ final class InternalQuestionController: ResourceRepresentable {
                                     .map { (question: Question) -> JSON in
                                         try JSON(node: [
                                             "id": question.id!.int,
-                                            "message": drop.cipher.decrypt(question.message)
+                                            "message": question.decryptMessage(droplet: drop)
                                         ])
                                     }
         let randomNum = Int(arc4random_uniform(UInt32(questions.count)))
@@ -29,5 +34,13 @@ final class InternalQuestionController: ResourceRepresentable {
         return Resource(
             index: randomQuestion
         )
+    }
+
+    private func arc4random_uniform(_ max: UInt32) -> UInt32 {
+        #if os(Linux)
+            return UInt32(SwiftGlibc.rand() % Int32(max))
+        #else
+            return Foundation.arc4random_uniform(max)
+        #endif
     }
 }

@@ -22,7 +22,7 @@ final class InternalAnswerCheckController: ResourceRepresentable {
 
     func makeResource() -> Resource<String> {
         return Resource(
-                store: check
+            store: check
         )
     }
 }

@@ -1,11 +1,11 @@
 {
     "hash": {
         "method": "sha256",
-        "key": "password"
+        "key": "$OLVIDO_HASH_KEY"
     },
     "cipher": {
         "method": "chacha20",
-        "key": "passwordpasswordpasswordpassword",
+        "key": "$OLVIDO_CIPHER_KEY",
         "iv": "password"
     }
 }
