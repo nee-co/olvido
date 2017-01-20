@@ -1,6 +1,10 @@
-# Basic Template
-
-A basic vapor template for starting a new Vapor web application. If you're using vapor toolbox, you can use: `vapor new --template=basic`
+|         	        |                             |
+|:---------------------:|:---------------------------:|
+|          OS           |        Ubuntu (14.04)       |
+|       　使用言語         |        Swift (3.0.2)        |
+| 　   使用フレームワーク      |        Vapor (1.1.0)        |
+|      バージョン管理       |             Git             |
+|     Gitホスティング      |          Bitbucket          |
 
 ## 📖 Documentation
 
