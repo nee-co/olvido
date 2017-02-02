@@ -40,7 +40,7 @@ COPY . /App
 # mount in local sources via:  -v $(PWD):/vapor
 # the vapor CLI command does this
 
-CMD swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib -Xswiftc -DNOJSON  && \
-    .build/debug/App
+RUN swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib -Xswiftc -DNOJSON
+CMD .build/debug/App
 ARG REVISION
 LABEL revision=$REVISION maintainer="Nee-co"
